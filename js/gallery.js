@@ -66,41 +66,40 @@ const images = [
 
 const galleryList = document.querySelector(".gallery");
 
+const fragment = document.createDocumentFragment();
+
 images.forEach((img) => {
-  let listItem = document.createElement("li");
+  const listItem = document.createElement("li");
   listItem.classList.add("gallery-item");
 
-  let galleryLink = document.createElement("a");
+  const galleryLink = document.createElement("a");
   galleryLink.classList.add("gallery-link");
   galleryLink.href = img.original;
 
-  galleryLink.onclick = () => {
-    return false;
-  }
+  const image = document.createElement("img");
+  image.classList.add("gallery-image");
+  image.src = img.preview;
+  image.setAttribute("data-source", img.original);
+  image.alt = img.description;
 
-  galleryLink.innerHTML = `<img
-                            class="gallery-image"
-                            src="${img.preview}"
-                            data-source="${img.original}"
-                            alt="${img.description}"
-                        />`;
-
+  galleryLink.appendChild(image);
   listItem.appendChild(galleryLink);
-  galleryList.appendChild(listItem);
+  fragment.appendChild(listItem);
 });
 
-galleryList.addEventListener("click", function (event) {
+galleryList.appendChild(fragment);
 
+galleryList.addEventListener("click", function (event) {
   if (
-    event.target.nodeName == "IMG" &&
-    event.target.attributes.getNamedItem("data-source")
+    event.target.nodeName === "IMG" &&
+    event.target.getAttribute("data-source")
   ) {
+    event.preventDefault();
     const instance = basicLightbox.create(`
-    <img src="${
-      event.target.attributes.getNamedItem("data-source").value
-    }" width="800" height="600">
-`);
+      <img src="${event.target.getAttribute(
+        "data-source"
+      )}" width="800" height="600">
+    `);
     instance.show();
   }
 });
-
